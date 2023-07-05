@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome to My Image Hosting Site</h1>
+    <div class="photo-grid">
+        {% for photo in photos %}
+            <div class="photo-wrapper">
+                <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" class="photo">
+                <p>{{ photo.caption }}</p>
+                <form action="{% url 'delete_photo' photo.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+                <button onclick="copyToClipboard('{{ photo.image.url }}')">Copy Link</button>
+            </div>
+        {% empty %}
+            <p>No photos yet!</p>
+        {% endfor %}
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+  const el = document.createElement('textarea');
+  el.value = window.location.origin + text;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+  alert('Link copied to clipboard!');
+}
+    </script>
+
+
+<style>
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-gap: 20px;
+    }
+
+    .photo-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .photo {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+</style>
+{% endblock %}
